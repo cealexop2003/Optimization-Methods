@@ -23,7 +23,14 @@ function [best_chromosome, best_fitness, history] = ga_main(u1_train, u2_train, 
 %                     .avg_mse     - Average MSE per generation
 %                     .best_fitness - Best fitness per generation
 
-    fprintf('Starting GA with M=%d Gaussians, pop_size=%d\n', M, params.pop_size);
+    % Check if verbose mode is enabled (default: true)
+    if ~isfield(params, 'verbose')
+        params.verbose = true;
+    end
+    
+    if params.verbose
+        fprintf('Starting GA with M=%d Gaussians, pop_size=%d\n', M, params.pop_size);
+    end;
     
     % Initialize population
     population = initialize_population(params.pop_size, M, params.bounds);
@@ -68,7 +75,7 @@ function [best_chromosome, best_fitness, history] = ga_main(u1_train, u2_train, 
         history.best_fitness(gen) = global_best_fitness;
         
         % Print progress every 10 generations
-        if mod(gen, 10) == 0 || gen == 1
+        if params.verbose && (mod(gen, 10) == 0 || gen == 1)
             fprintf('Gen %3d: Best MSE = %.6f, Avg MSE = %.6f\n', ...
                     gen, global_best_mse, mean(mse_values));
         end
@@ -77,8 +84,10 @@ function [best_chromosome, best_fitness, history] = ga_main(u1_train, u2_train, 
         if gen > params.patience
             improvement = history.best_mse(gen - params.patience) - history.best_mse(gen);
             if improvement < 1e-6
-                fprintf('Early stopping at generation %d (no improvement for %d generations)\n', ...
-                        gen, params.patience);
+                if params.verbose
+                    fprintf('Early stopping at generation %d (no improvement for %d generations)\n', ...
+                            gen, params.patience);
+                end
                 % Trim history arrays
                 history.best_mse = history.best_mse(1:gen);
                 history.avg_mse = history.avg_mse(1:gen);
@@ -135,5 +144,7 @@ function [best_chromosome, best_fitness, history] = ga_main(u1_train, u2_train, 
     best_chromosome = global_best_chromosome;
     best_fitness = global_best_fitness;
     
-    fprintf('GA finished: Final best MSE = %.6f\n', global_best_mse);
+    if params.verbose
+        fprintf('GA finished: Final best MSE = %.6f\n', global_best_mse);
+    end
 end

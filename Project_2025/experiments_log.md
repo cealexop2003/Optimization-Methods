@@ -5,8 +5,6 @@ This file tracks all experimental runs and parameter tuning.
 ---
 
 ## Run 1: Baseline (Default Parameters)
-**Date:** 2025-12-28  
-**Commit:** [insert git hash after commit]
 
 ### Parameters:
 - Population size: 100
@@ -52,8 +50,6 @@ This file tracks all experimental runs and parameter tuning.
 ---
 
 ## Run 2: Seed Validation (Different Train/Test Split)
-**Date:** 2025-12-28  
-**Commit:** [insert git hash after commit]
 
 ### Parameters:
 - Population size: 100
@@ -107,3 +103,27 @@ This file tracks all experimental runs and parameter tuning.
 2. **Consistent range**: M=3-8 performs well in both runs
 3. **Variability with seeds**: Different train/test splits favor different model complexities
 4. **Recommendation for report**: Use M=5-8 range, or cross-validation for robustness
+
+---
+
+## Run 3: Stability Analysis (20 Different Seeds)
+**Purpose:** Find most robust M across multiple train/test splits
+
+### Configuration:
+- 20 runs with seeds: [1000,1500], [2000,2500], ..., [20000,20500]
+- All other parameters identical to Run 1 & 2
+
+### Top-5 Models by Stability:
+
+| M | Wins | Top-3 | Avg Rank | Median MSE | Std MSE |
+|---|------|-------|----------|------------|---------|
+| **5** | **4** | **11/20** | **4.30** | **0.0234** | **0.0087** |
+| 6 | 2 | 12/20 | 4.40 | 0.0240 | 0.0086 |
+| 4 | 2 | 6/20 | 5.05 | 0.0271 | 0.0079 |
+| 8 | 3 | 6/20 | 5.45 | 0.0261 | 0.0102 |
+| 3 | 1 | 4/20 | 5.85 | 0.0278 | 0.0079 |
+
+### Final Recommendation:
+**M = 5 Gaussians** (best by all metrics: wins, top-3 rate, avg rank, median MSE)
+
+**Alternative:** M=6 (highest top-3 consistency at 60%, very stable)

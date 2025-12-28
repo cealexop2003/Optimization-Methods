@@ -1,9 +1,10 @@
-function [u1, u2, y] = generate_data(num_samples, data_type)
+function [u1, u2, y] = generate_data(num_samples, data_type, custom_seed)
 % GENERATE_DATA - Generate training or testing data
 %
 % Inputs:
-%   num_samples - Number of data points to generate
-%   data_type   - 'train' or 'test' (determines random seed)
+%   num_samples  - Number of data points to generate
+%   data_type    - 'train' or 'test' (determines random seed)
+%   custom_seed  - (Optional) Custom seed value to use instead of defaults
 %
 % Outputs:
 %   u1 - First input vector (num_samples x 1)
@@ -15,12 +16,18 @@ function [u1, u2, y] = generate_data(num_samples, data_type)
 %   u2 ∈ [-2, 1]
 
     % Set random seed based on data type (ensures train/test are different)
-    if strcmp(data_type, 'train')
-        rng(100);  % Fixed seed for reproducibility (changed from 42)
-    elseif strcmp(data_type, 'test')
-        rng(200); % Different seed for test set (changed from 123)
+    if nargin < 3
+        % Use default seeds
+        if strcmp(data_type, 'train')
+            rng(100);  % Fixed seed for reproducibility
+        elseif strcmp(data_type, 'test')
+            rng(200);  % Different seed for test set
+        else
+            error('data_type must be either ''train'' or ''test''');
+        end
     else
-        error('data_type must be either ''train'' or ''test''');
+        % Use custom seed provided
+        rng(custom_seed);
     end
     
     % Generate random samples uniformly in the input space
