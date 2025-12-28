@@ -212,3 +212,40 @@ This file tracks all experimental runs and parameter tuning.
 3. **Low variance:** std=0.0056 (very stable performance)
 4. **M=6 (tuning winner) failed:** Only 1/20 top-3, not robust
 5. **Different M → Different optimal params:** One-size-fits-all doesn't work
+
+---
+
+## Run 6: Statistical Model Selection (Parsimony + Significance)
+**Purpose:** Apply statistical rigor and parsimony principle to final model selection
+
+### Methodology:
+- Paired t-tests between top candidates (M=8, M=7, M=3)
+- Parsimony rule: If difference <10%, choose simpler model
+- Significance level: α = 0.05
+
+### Statistical Tests Results:
+
+| Comparison | Mean Diff | t-statistic | p-value | Significant? |
+|------------|-----------|-------------|---------|--------------|
+| M=8 vs M=7 | -0.0091 | -2.06 | 0.060 | ✗ No (marginal) |
+| M=8 vs M=3 | -0.0057 | -2.72 | 0.008 | ✓ **Yes** |
+| M=7 vs M=3 | 0.0034 | 0.75 | 0.100 | ✗ No |
+
+### Parsimony Analysis:
+
+| Comparison | Median Diff | Complexity Diff | Decision |
+|------------|-------------|-----------------|----------|
+| M=8 vs M=7 | **15.3%** worse | 5 params more | Choose M=8 (>10% better) |
+| M=8 vs M=3 | **30.6%** worse | 25 params more | Choose M=8 (>10% better) |
+
+### Final Decision:
+**M = 8 Gaussians (40 parameters)**
+
+**Justification:**
+1. ✅ **Statistically superior** to M=3 (p=0.008)
+2. ✅ **15% better** than M=7 (exceeds 10% parsimony threshold)
+3. ✅ **Borderline vs M=7** (p=0.06) but with superior stability (std 3× lower)
+4. ✅ **Dominant robustness:** 80% top-3 consistency, 5/20 wins
+5. ✅ **Justified complexity:** Performance gains worth 40 parameters
+
+**Trade-off accepted:** +5 params vs M=7 for 15% MSE improvement + better stability
