@@ -127,3 +127,88 @@ This file tracks all experimental runs and parameter tuning.
 **M = 5 Gaussians** (best by all metrics: wins, top-3 rate, avg rank, median MSE)
 
 **Alternative:** M=6 (highest top-3 consistency at 60%, very stable)
+
+---
+
+## Run 4: Parameter Tuning (Grid Search)
+**Purpose:** Optimize GA parameters (patience, sigma bounds, max_gen, w bounds)
+
+### Tuning Grid:
+- Patience: [20, 30, 50]
+- Sigma bounds: [[0.1, 2.0], [0.1, 5.0]]
+- Max generations: [250, 500]
+- W bounds: [[-5, 5], [-10, 10]]
+- **Total:** 24 configurations × 15 M values = 360 runs
+
+### Best Configuration (Config #10):
+
+| Parameter | Baseline | Tuned |
+|-----------|----------|-------|
+| Patience | 30 | 30 ✓ |
+| Sigma bounds | [0.1, 2.0] | [0.1, 2.0] ✓ |
+| Max gen | 250 | 250 ✓ |
+| **W bounds** | **[-5, 5]** | **[-10, 10]** ⭐ |
+
+### Results:
+**Winner from 360 combinations** (24 configs × 15 M): **Config #10, M=6**  
+**Test MSE:** 0.009366 (36% improvement over baseline!)
+
+| Rank | Config | M | Test MSE |
+|------|--------|---|----------|
+| 1st | #10 | **6** | **0.009366** |
+| 2nd | #3 | 9 | 0.012994 |
+| 3rd | #11 | 6 | 0.013084 |
+
+**Config #10 detailed results:**
+
+| M | Train MSE | Test MSE | Improvement |
+|---|-----------|----------|-------------|
+| **6** | **0.009301** | **0.009366** | **-36%** |
+| 8 | 0.023309 | 0.019578 | +6% |
+| 2 | 0.032702 | 0.026683 | -2% |
+
+### Key Findings (across all 24 configs):
+1. **W bounds critical:** [-10,10] consistently better than [-5,5]
+2. **Sigma=[0.1,5] harmful:** All wide-sigma configs performed poorly
+3. **Max_gen=500 unnecessary:** No improvement, just 2× runtime
+4. **M=6 optimal** with tuned params (shifted from M=5)
+5. **Perfect generalization:** Train ≈ Test (0.0093 ≈ 0.0094)
+
+---
+
+## Run 5: Optimized Stability Analysis (M-Specific Configs)
+**Purpose:** Fair comparison - each M uses its own best configuration from tuning
+
+### Methodology:
+- For each M=1:15, identified best config from 24 tuning runs
+- Ran 20-seed stability with M-specific optimized parameters
+- Seeds: [1000,1500], [2000,2500], ..., [20000,20500]
+
+### Top-5 Models with Optimized Configs:
+
+| M | Wins | Top-3 | Avg Rank | Median MSE | Std MSE | Best Config |
+|---|------|-------|----------|------------|---------|-------------|
+| **8** | **5** | **16/20** | **2.40** | **0.0172** | **0.0056** | #19: p=50, max=500 |
+| 7 | 4 | 12/20 | 4.70 | 0.0199 | 0.0187 | #11: p=30, max=500 |
+| 3 | 2 | 9/20 | 3.80 | 0.0225 | 0.0065 | #19: p=50, max=500 |
+| 5 | 3 | 5/20 | 6.35 | 0.0294 | 0.0161 | #12: p=30, max=500 |
+| 4 | 2 | 4/20 | 6.15 | 0.0314 | 0.0101 | #18: p=50, max=250 |
+
+### Final Recommendation:
+**M = 8 Gaussians** (dominant by ALL metrics)
+
+**Optimized parameters for M=8:**
+
+| Parameter | Baseline | M=8 Optimized |
+|-----------|----------|---------------|
+| Patience | 30 | **50** ⭐ |
+| Max gen | 250 | **500** ⭐ |
+| W bounds | [-5,5] | [-5,5] ✓ |
+| Sigma | [0.1,2.0] | [0.1,2.0] ✓ |
+
+### Key Insights:
+1. **M=8 needs more evolution time:** patience=50, max_gen=500
+2. **80% top-3 consistency:** Most robust across different data splits
+3. **Low variance:** std=0.0056 (very stable performance)
+4. **M=6 (tuning winner) failed:** Only 1/20 top-3, not robust
+5. **Different M → Different optimal params:** One-size-fits-all doesn't work
