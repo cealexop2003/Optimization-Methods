@@ -1,0 +1,32 @@
+# Generated figures
+*.png
+*.jpg
+*.fig
+
+# MATLAB temporary files
+*.asv
+*.m~
+
+# MATLAB autosave
+*.autosave
+
+# Python (if used)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# macOS
+.DS_Store
+._*
+
+# VS Code
+.vscode/settings.json
+.vscode/tasks.json
+
+# Results/data (if you want to exclude generated data)
+# results/
+# *.mat
+
+# PDF (if you don't want to track the assignment PDF)
+# Project2025.pdf
