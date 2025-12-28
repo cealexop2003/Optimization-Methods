@@ -16,9 +16,9 @@ function [u1, u2, y] = generate_data(num_samples, data_type)
 
     % Set random seed based on data type (ensures train/test are different)
     if strcmp(data_type, 'train')
-        rng(42);  % Fixed seed for reproducibility
+        rng(100);  % Fixed seed for reproducibility (changed from 42)
     elseif strcmp(data_type, 'test')
-        rng(123); % Different seed for test set
+        rng(200); % Different seed for test set (changed from 123)
     else
         error('data_type must be either ''train'' or ''test''');
     end

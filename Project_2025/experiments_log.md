@@ -48,3 +48,62 @@ This file tracks all experimental runs and parameter tuning.
 - Sweet spot: M=6-9
 - Overfitting starts at M≥10
 - Early stopping effective (M=6,8 stopped before 250 gens)
+
+---
+
+## Run 2: Seed Validation (Different Train/Test Split)
+**Date:** 2025-12-28  
+**Commit:** [insert git hash after commit]
+
+### Parameters:
+- Population size: 100
+- Max generations: 250
+- Crossover prob: 0.7
+- Mutation prob: 0.01
+- Elitism: 2
+- Patience: 30
+
+### Bounds:
+- w: [-5, 5]
+- c1: [-1, 2]
+- c2: [-2, 1]
+- sigma1, sigma2: [0.1, 2]
+
+### Change from Run 1:
+- **Train seed:** 42 → 100
+- **Test seed:** 123 → 200
+
+### Results:
+**Best Model:** M = 5 Gaussians
+
+| M  | Train MSE | Test MSE | Generations |
+|----|-----------|----------|-------------|
+| 1  | 0.055289  | 0.056525 | 147         |
+| 2  | 0.032395  | 0.026966 | 250         |
+| 3  | 0.025545  | 0.020687 | 250         |
+| 4  | 0.028168  | 0.022510 | 250         |
+| **5**  | **0.019041**  | **0.014711** | **250**         |
+| 6  | 0.039788  | 0.038420 | 250         |
+| 7  | 0.026921  | 0.020437 | 250         |
+| 8  | 0.061872  | 0.052363 | 84          |
+| 9  | 0.025901  | 0.026798 | 250         |
+| 10 | 0.026936  | 0.028355 | 248         |
+| 11 | 0.048659  | 0.042568 | 250         |
+| 12 | 0.058207  | 0.068266 | 138         |
+| 13 | 0.026398  | 0.026828 | 250         |
+| 14 | 0.027925  | 0.025902 | 250         |
+| 15 | 0.036790  | 0.039963 | 250         |
+
+### Observations:
+- **M=5 achieved best test MSE (0.014711)** - DIFFERENT from Run 1!
+- M=5 shows consistent generalization (Test < Train)
+- M=3,4,7 also show good performance (Test MSE ~0.020-0.022)
+- M=8 performed poorly in Run 2 (Test MSE=0.052), early stopped at gen 84
+- Sweet spot: M=3-7 (more conservative than Run 1)
+- Overfitting evident for M≥9
+
+### Key Insights:
+1. **Optimal M is data-dependent**: Run 1 → M=8, Run 2 → M=5
+2. **Consistent range**: M=3-8 performs well in both runs
+3. **Variability with seeds**: Different train/test splits favor different model complexities
+4. **Recommendation for report**: Use M=5-8 range, or cross-validation for robustness
